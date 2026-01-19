@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'get_id.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -126,7 +127,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // TODO: Handle tap
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const GetIDPage(),
+                          ),
+                        );
                       },
                       child: const Text(
                         "Tap Here",
@@ -152,13 +158,54 @@ class _LoginPageState extends State<LoginPage> {
                 // Enter Button
                 GestureDetector(
                   onTap: () {
-                    // TODO: Handle login logic
-                    debugPrint(
-                        "Enter button pressed with ID: ${_idController.text}");
+                    final id = _idController.text.trim();
+                    if (id.isEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                          content: SizedBox(
+                            height: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "ID is Empty!",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                "OK",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      // Login Logic
+                      debugPrint("Enter button pressed with ID: $id");
+                    }
                   },
                   child: Image.asset(
                     'assets/Enter_Button.png',
-                    width: 200, // Adjust width as needed
+                    width: 200,
                     fit: BoxFit.contain,
                   ),
                 ),

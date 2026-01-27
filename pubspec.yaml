@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +20,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logov1.png
+    - assets/Enter_Button.png
+    - assets/Done_Button.png
+    - assets/Textbox.png

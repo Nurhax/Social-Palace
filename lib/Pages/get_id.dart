@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
+import '../Data/data_manager.dart';
 
 class GetIDPage extends StatefulWidget {
   const GetIDPage({super.key});
@@ -26,11 +27,16 @@ class _GetIDPageState extends State<GetIDPage> {
         8, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
   }
 
-  void _copyToClipboard() {
+  Future<void> _copyToClipboard() async {
     Clipboard.setData(ClipboardData(text: generatedID));
+
+    // Save generated ID to data.json
+    await DataManager().saveId(generatedID);
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("ID copied to clipboard!"),
+        content: Text("ID copied to clipboard and saved!"),
         duration: Duration(seconds: 1),
       ),
     );

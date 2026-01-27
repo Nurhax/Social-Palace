@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'get_id.dart';
+import '../Data/data_manager.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,6 +16,47 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _idController.dispose();
     super.dispose();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero), // Sharp edges
+        content: SizedBox(
+          height: 100, // Fixed height for content
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "OK",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -157,50 +199,20 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Enter Button
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     final id = _idController.text.trim();
                     if (id.isEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero),
-                          content: SizedBox(
-                            height: 100,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "ID is Empty!",
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                "OK",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      _showErrorDialog("ID is Empty!");
                     } else {
-                      // Login Logic
-                      debugPrint("Enter button pressed with ID: $id");
+                      // Check ID against data.json
+                      bool isValid = await DataManager().checkId(id);
+                      if (isValid) {
+                        debugPrint("Login Successful: $id");
+                      } else {
+                        if (context.mounted) {
+                          _showErrorDialog("ID not found!"); // Login failed
+                        }
+                      }
                     }
                   },
                   child: Image.asset(
